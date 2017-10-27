@@ -13,18 +13,22 @@
 		<property name="securityManager" ref="securityManager" />
 		<!-- 设定角色的登录链接，这里为cas登录页面的链接可配置回调地址 -->
 		<property name="loginUrl"
-			value="http://localhost:80803/cas/login?service=http://localhost:8080/cas-client-demo1/shiro-cas" />
+			value="http://localhost:8080/cas/login?service=http://localhost:9090/cas-client-demo1/shiro-cas" />
 
 		<property name="filters">
 			<util:map>
 				<!-- 添加casFilter到shiroFilter -->
 				<entry key="casFilter" value-ref="casFilter" />
+				<entry key="logout" value-ref="logout" />  
 			</util:map>
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
 				/shiro-cas = casFilter
+				/logout = logout
 				/admin/** = roles[ROLE_USER]
+				/user = authc
+				/user/** = authc
 				/** = anon
 			</value>
 		</property>
@@ -32,15 +36,28 @@
 
 	<bean id="casFilter" class="org.apache.shiro.cas.CasFilter">
 		<!-- 配置验证错误时的失败页面 -->
-		<property name="failureUrl" value="/error.jsp" />
+		<property name="failureUrl" value="error" />
 	</bean>
+	
+	<bean id="logout" class="org.apache.shiro.web.filter.authc.LogoutFilter">  
+          <property name="redirectUrl"   
+           value="http://localhost:8080/cas/logout?service=http://localhost:9090/cas-client-demo1"/>  
+	</bean>  
 
+	<bean id="casRealm" class="cn.wenbo.ding.cas.repository.ShiroCasRealm">
+		<property name="defaultRoles" value="ROLE_USER" />
+		<property name="casServerUrlPrefix" value="http://localhost:8080/cas" />
+<!-- 		客户端的回调地址设置，必须和下面的shiro-cas过滤器拦截的地址一致 -->
+		<property name="casService" value="http://localhost:9090/cas-client-demo1/shiro-cas" />
+	</bean>
+	
+<!-- 
 	<bean id="casRealm" class="org.apache.shiro.cas.CasRealm">
 		<property name="defaultRoles" value="ROLE_USER" />
-		<property name="casServerUrlPrefix" value="http://localhost:80803/cas/login=" />
-		<!-- 客户端的回调地址设置，必须和下面的shiro-cas过滤器拦截的地址一致 -->
-		<property name="casService" value="http://localhost:8080/cas-client-demo1/shiro-cas" />
-	</bean>
+		<property name="casServerUrlPrefix" value="http://localhost:8080/cas/login=" />
+		客户端的回调地址设置，必须和下面的shiro-cas过滤器拦截的地址一致
+		<property name="casService" value="http://localhost:9090/cas-client-demo1/shiro-cas" />
+	</bean> -->
 
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
 		<property name="realm" ref="casRealm" />
@@ -49,7 +66,6 @@
 
 	<!-- 如果要实现cas的remember me的功能，需要用到下面这个bean，并设置到securityManager的subjectFactory中 -->
 	<bean id="casSubjectFactory" class="org.apache.shiro.cas.CasSubjectFactory" />
-
 
 	<bean
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
