@@ -18,13 +18,13 @@
 		<property name="filters">
 			<util:map>
 				<!-- 添加casFilter到shiroFilter -->
-				<entry key="casFilter" value-ref="casFilter" />
+				<entry key="cas" value-ref="casFilter" />
 				<entry key="logout" value-ref="logout" />  
 			</util:map>
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
-				/shiro-cas = casFilter
+				/shiro-cas = cas
 				/logout = logout
 				/admin/** = roles[ROLE_USER]
 				/user = authc
