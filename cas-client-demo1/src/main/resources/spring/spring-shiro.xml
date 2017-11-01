@@ -13,18 +13,18 @@
 		<property name="securityManager" ref="securityManager" />
 		<!-- 设定角色的登录链接，这里为cas登录页面的链接可配置回调地址 -->
 		<property name="loginUrl"
-			value="http://localhost:8080/cas/login?service=http://localhost:9090/cas-client-demo1/shiro-cas" />
+			value="http://localhost:8080/cas/login?service=http://localhost:9090/cas-client-demo1/cas" />
 
 		<property name="filters">
 			<util:map>
 				<!-- 添加casFilter到shiroFilter -->
 				<entry key="cas" value-ref="casFilter" />
-				<entry key="logout" value-ref="logout" />  
+				<entry key="logout" value-ref="logoutFilter" />  
 			</util:map>
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
-				/shiro-cas = cas
+				/cas = cas
 				/logout = logout
 				/admin/** = roles[ROLE_USER]
 				/user = authc
@@ -39,7 +39,7 @@
 		<property name="failureUrl" value="error" />
 	</bean>
 	
-	<bean id="logout" class="org.apache.shiro.web.filter.authc.LogoutFilter">  
+	<bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">  
           <property name="redirectUrl"   
            value="http://localhost:8080/cas/logout?service=http://localhost:9090/cas-client-demo1"/>  
 	</bean>  
@@ -48,7 +48,7 @@
 		<property name="defaultRoles" value="ROLE_USER" />
 		<property name="casServerUrlPrefix" value="http://localhost:8080/cas" />
 <!-- 		客户端的回调地址设置，必须和下面的shiro-cas过滤器拦截的地址一致 -->
-		<property name="casService" value="http://localhost:9090/cas-client-demo1/shiro-cas" />
+		<property name="casService" value="http://localhost:9090/cas-client-demo1/cas" />
 	</bean>
 	
 <!-- 
