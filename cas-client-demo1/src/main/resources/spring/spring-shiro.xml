@@ -34,9 +34,9 @@
 		</property>
 	</bean>
 
-	<bean id="casFilter" class="org.apache.shiro.cas.CasFilter">
+	<bean id="casFilter" class="cn.wenbo.ding.cas.repository.CasFilter">
 		<!-- 配置验证错误时的失败页面 -->
-		<property name="failureUrl" value="error" />
+		<property name="failureUrl" value="logout" />
 	</bean>
 	
 	<bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">  
